@@ -1,0 +1,14 @@
+{
+  "development": {
+    "storage": "library.db",
+    "dialect": "sqlite3"
+  },
+  "test": {
+    "storage": "library.db",
+    "dialect": "sqlite3"
+  },
+  "production": {
+    "storage": "library.db",
+    "dialect": "sqlite3"
+  }
+}
