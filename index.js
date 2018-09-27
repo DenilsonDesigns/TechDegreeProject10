@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const Sequelize = require("sequelize");
-// const Book = require("./models").book;
+// const Book = require("./models/book");
 
 //SET VIEW ENGINE
 app.set("view engine", "pug");
@@ -38,26 +38,61 @@ const User = sequelize.define("user", {
   birthday: Sequelize.DATE
 });
 
-const Book = sequelize.define("book", {
-  title: Sequelize.TEXT,
-  author: Sequelize.TEXT,
-  genre: Sequelize.TEXT,
-  first_published: Sequelize.INTEGER
-});
+const Book = sequelize.define(
+  "book",
+  {
+    title: {
+      type: Sequelize.TEXT
+    },
+    author: {
+      type: Sequelize.TEXT
+    },
+    genre: {
+      type: Sequelize.STRING
+    },
+    first_published: {
+      type: Sequelize.INTEGER
+    }
+  },
+  {
+    timestamps: false
+  }
+);
 
-sequelize
-  .sync()
-  .then(() =>
-    Book.create({
-      title: "harry potter smells",
-      author: "JK Boring",
-      genre: "Childrens",
-      first_published: 2012
-    })
-  )
-  .then(jane => {
-    console.log(jane.toJSON());
-  });
+// Uploading a value- Book (working)
+// sequelize
+//   .sync()
+//   .then(() =>
+//     Book.create({
+//       title: "Smararfield",
+//       author: "JK Boring",
+//       genre: "Childrens",
+//       first_published: 2012,
+//       timestamps: false
+//     })
+//   )
+//   .then(jane => {
+//     console.log(jane.toJSON());
+//   });
+
+//Uploading a value- User (working)
+// sequelize
+//   .sync()
+//   .then(() =>
+//     User.create({
+//       username: "harry potter smells"
+//     })
+//   )
+//   .then(jane => {
+//     console.log(jane.toJSON());
+//   });
+
+// Pulling a value- (working)
+sequelize.sync().then(() =>
+  Book.findAll().then(user => {
+    console.log(user);
+  })
+);
 
 //////////////////
 //SERVER SETUP////
