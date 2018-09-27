@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const Sequelize = require("sequelize");
+// const Book = require("./models").book;
 
 //SET VIEW ENGINE
 app.set("view engine", "pug");
@@ -9,7 +10,7 @@ app.use("/static", express.static("public"));
 //CONFIG SEQUELIZE
 const sequelize = new Sequelize("development", "root", "password", {
   dialect: "sqlite",
-  port: 3306 // or 5432 (for postgres)
+  storage: "./library.db"
 });
 
 //GET INDEX
@@ -32,6 +33,32 @@ app.get("/all_loans", (req, res) => {
   res.render("all_loans");
 });
 
+const User = sequelize.define("user", {
+  username: Sequelize.STRING,
+  birthday: Sequelize.DATE
+});
+
+const Book = sequelize.define("book", {
+  title: Sequelize.TEXT,
+  author: Sequelize.TEXT,
+  genre: Sequelize.TEXT,
+  first_published: Sequelize.INTEGER
+});
+
+sequelize
+  .sync()
+  .then(() =>
+    Book.create({
+      title: "harry potter smells",
+      author: "JK Boring",
+      genre: "Childrens",
+      first_published: 2012
+    })
+  )
+  .then(jane => {
+    console.log(jane.toJSON());
+  });
+
 //////////////////
 //SERVER SETUP////
 //////////////////
@@ -42,18 +69,3 @@ sequelize.sync().then(() => {
     console.log("Library Manager fired up");
   });
 });
-
-//NOTES*********
-// var Sequelize = require('sequelize')
-//   , sequelize = new Sequelize('database_name', 'username', 'password', {
-//       dialect: "mysql", // or 'sqlite', 'postgres', 'mariadb'
-//       port:    3306, // or 5432 (for postgres)
-//     });
-
-// sequelize
-//   .authenticate()
-//   .then(function(err) {
-//     console.log('Connection has been established successfully.');
-//   }, function (err) {
-//     console.log('Unable to connect to the database:', err);
-//   });
