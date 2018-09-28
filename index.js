@@ -13,31 +13,7 @@ const sequelize = new Sequelize("development", "root", "password", {
   storage: "./library.db"
 });
 
-//GET INDEX
-app.get("/", (req, res) => {
-  res.render("index");
-});
-
-//GET ALL BOOKS
-app.get("/all_books", (req, res) => {
-  res.render("all_books");
-});
-
-//GET ALL PATRONS
-app.get("/all_patrons", (req, res) => {
-  res.render("all_patrons");
-});
-
-//GET ALL LOANS
-app.get("/all_loans", (req, res) => {
-  res.render("all_loans");
-});
-
-const User = sequelize.define("user", {
-  username: Sequelize.STRING,
-  birthday: Sequelize.DATE
-});
-
+//Define book model
 const Book = sequelize.define(
   "book",
   {
@@ -58,6 +34,88 @@ const Book = sequelize.define(
     timestamps: false
   }
 );
+
+//Define Patron model
+const Patron = sequelize.define(
+  "patron",
+  {
+    first_name: {
+      type: Sequelize.TEXT
+    },
+    last_name: {
+      type: Sequelize.TEXT
+    },
+    address: {
+      type: Sequelize.TEXT
+    },
+    email: {
+      type: Sequelize.TEXT
+    },
+    library_id: {
+      type: Sequelize.TEXT
+    },
+    zip_code: {
+      type: Sequelize.INTEGER
+    }
+  },
+  {
+    timestamps: false
+  }
+);
+
+//Define Loan model
+const Loan = sequelize.define(
+  "loan",
+  {
+    book_id: {
+      type: Sequelize.INTEGER
+    },
+    patron_id: {
+      type: Sequelize.INTEGER
+    },
+    loaned_on: {
+      type: Sequelize.DATE
+    },
+    return_by: {
+      type: Sequelize.DATE
+    },
+    returned_on: {
+      type: Sequelize.DATE
+    }
+  },
+  {
+    timestamps: false
+  }
+);
+
+//GET INDEX
+app.get("/", (req, res) => {
+  res.render("index");
+});
+
+//GET ALL BOOKS
+app.get("/all_books", (req, res) => {
+  Book.findAll().then(bookerT => {
+    res.render("all_books", { books: bookerT });
+    // console.log(bookerT[0].dataValues);
+  });
+});
+
+//GET ALL PATRONS
+app.get("/all_patrons", (req, res) => {
+  Patron.findAll().then(patronage => {
+    res.render("all_patrons", { patrons: patronage });
+    // console.log(patronage[0].dataValues);
+  });
+});
+
+//GET ALL LOANS
+app.get("/all_loans", (req, res) => {
+  Loan.findAll().then(loaner => {
+    res.render("all_loans", { loans: loaner });
+    console.log(loaner[0].dataValues);
+  });
+});
 
 // Uploading a value- Book (working)
 // sequelize
@@ -88,11 +146,11 @@ const Book = sequelize.define(
 //   });
 
 // Pulling a value- (working)
-sequelize.sync().then(() =>
-  Book.findAll().then(user => {
-    console.log(user);
-  })
-);
+// sequelize.sync().then(() =>
+//   Book.findAll().then(user => {
+//     console.log(user);
+//   })
+// );
 
 //////////////////
 //SERVER SETUP////
