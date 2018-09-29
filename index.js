@@ -137,6 +137,22 @@ app.get("/books/new", (req, res) => {
   res.render("new_book");
 });
 
+//GET checked_loans
+app.get("/checked_loans", (req, res) => {
+  sequelize.sync().then(() => {
+    Loan.findAll({
+      //Check if 'returned_on' = null
+      where: {
+        returned_on: null
+      },
+      include: [{ model: Patron }, { model: Book }]
+    }).then(loaner => {
+      console.log(loaner[3].dataValues);
+      res.render("checked_loans", { loans: loaner });
+    });
+  });
+});
+
 //GET new patron form
 app.get("/patrons/new", (req, res) => {
   res.render("new_patron");
@@ -185,9 +201,9 @@ app.post("/patrons/new", (req, res) => {
     .catch(err => console.log(err));
 });
 
-//////////////////
-//SERVER SETUP////
-//////////////////
+//////////////////////
+/////SERVER SETUP/////
+//////////////////////
 const port = process.env.PORT || 3000;
 
 sequelize.sync().then(() => {
