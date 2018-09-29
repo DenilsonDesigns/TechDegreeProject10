@@ -153,6 +153,22 @@ app.get("/checked_loans", (req, res) => {
   });
 });
 
+//GET checked books
+app.get("/checked_books", (req, res) => {
+  sequelize.sync().then(() => {
+    Loan.findAll({
+      //Check if 'returned_on' = null
+      where: {
+        returned_on: null
+      },
+      include: [{ model: Patron }, { model: Book }]
+    }).then(checkedBooks => {
+      // console.log(checkedBooks[3].dataValues);
+      res.render("checked_books", { checkedBooks: checkedBooks });
+    });
+  });
+});
+
 //GET new patron form
 app.get("/patrons/new", (req, res) => {
   res.render("new_patron");
