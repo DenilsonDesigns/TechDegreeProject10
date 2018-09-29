@@ -1,0 +1,36 @@
+doctype html
+html
+  head
+    title New Patron
+    link(rel='stylesheet', href='/static/stylesheets/style.css')
+  body
+    nav
+      ul
+        li
+          a(href='../all_books') Books
+        li
+          a(href='all_patrons') Patrons
+        li
+          a(href='all_loans') Loans
+    h1 New Patron
+    form(action="/patrons/new" method="POST")
+      p
+        label(for='first_name') First Name
+        input#first_name(type='text' name="first_name")
+      p
+        label(for='last_name') Last Name
+        input#last_name(type='text' name="last_name")
+      p
+        label(for='address')  Address
+        input#address(type='text' name="address")
+      p
+        label(for='email') Email
+        input#email(type='email' name="email")
+      p
+        label(for='library_id') Library ID
+        input#library_id(type='text' name="library_ID")
+      p
+        label(for='zip_code') Zip Code
+        input#zip_code(type='text' name="zip_code")
+      p
+        input(type='submit', value='Create New Patron')

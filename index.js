@@ -137,6 +137,11 @@ app.get("/books/new", (req, res) => {
   res.render("new_book");
 });
 
+//GET new patron form
+app.get("/patrons/new", (req, res) => {
+  res.render("new_patron");
+});
+
 //POST book form
 app.post("/books/new", (req, res) => {
   const bookTitle = req.body.title;
@@ -157,21 +162,28 @@ app.post("/books/new", (req, res) => {
     .catch(err => console.log(err));
 });
 
-// Uploading a value- Book (working)
-// sequelize
-//   .sync()
-//   .then(() =>
-//     Book.create({
-//       title: "Smararfield",
-//       author: "JK Boring",
-//       genre: "Childrens",
-//       first_published: 2012,
-//       timestamps: false
-//     })
-//   )
-//   .then(jane => {
-//     console.log(jane.toJSON());
-//   });
+//POST patron form
+app.post("/patrons/new", (req, res) => {
+  const firstName = req.body.first_name;
+  const lastName = req.body.last_name;
+  const address = req.body.address;
+  const email = req.body.email;
+  const libID = req.body.library_ID;
+  const zipper = req.body.zip_code;
+  Patron.create({
+    first_name: firstName,
+    last_name: lastName,
+    address: address,
+    email: email,
+    library_id: libID,
+    zip_code: zipper
+  })
+    .then(patron => {
+      console.log(patron);
+      res.redirect("/all_patrons");
+    })
+    .catch(err => console.log(err));
+});
 
 //////////////////
 //SERVER SETUP////
