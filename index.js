@@ -1,15 +1,17 @@
 const express = require("express");
 const app = express();
 const Sequelize = require("sequelize");
-// const Book = require("./models/book");
+const bodyParser = require("body-parser");
 
 //SET VIEW ENGINE
 app.set("view engine", "pug");
 app.use("/static", express.static("public"));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 //CONFIG SEQUELIZE
 const sequelize = new Sequelize("development", "root", "password", {
   dialect: "sqlite",
+  omitNull: true,
   storage: "./library.db"
 });
 
@@ -88,6 +90,9 @@ const Loan = sequelize.define(
   }
 );
 
+Loan.belongsTo(Patron, { foreignKey: "patron_id" });
+Loan.belongsTo(Book, { foreignKey: "book_id" });
+
 //GET INDEX
 app.get("/", (req, res) => {
   res.render("index");
@@ -95,26 +100,61 @@ app.get("/", (req, res) => {
 
 //GET ALL BOOKS
 app.get("/all_books", (req, res) => {
-  Book.findAll().then(bookerT => {
-    res.render("all_books", { books: bookerT });
-    // console.log(bookerT[0].dataValues);
+  sequelize.sync().then(() => {
+    Book.findAll().then(bookerT => {
+      res.render("all_books", { books: bookerT });
+      // console.log(bookerT[0].dataValues);
+    });
   });
 });
 
 //GET ALL PATRONS
 app.get("/all_patrons", (req, res) => {
-  Patron.findAll().then(patronage => {
-    res.render("all_patrons", { patrons: patronage });
-    // console.log(patronage[0].dataValues);
+  sequelize.sync().then(() => {
+    Patron.findAll().then(patronage => {
+      res.render("all_patrons", { patrons: patronage });
+      // console.log(patronage[0].dataValues);
+    });
+  });
+});
+// Patron.hasOne(Loan, { foreignKey: "patron_id" });
+//GET ALL LOANS
+app.get("/all_loans", (req, res) => {
+  sequelize.sync().then(() => {
+    Loan.findAll({
+      include: [{ model: Patron }, { model: Book }],
+      order: [["id", "ASC"]]
+    }).then(loaner => {
+      res.render("all_loans", { loans: loaner });
+      // console.log(loaner[1].dataValues);
+      // console.log(loaner[1].dataValues.book.dataValues.title);
+    });
   });
 });
 
-//GET ALL LOANS
-app.get("/all_loans", (req, res) => {
-  Loan.findAll().then(loaner => {
-    res.render("all_loans", { loans: loaner });
-    console.log(loaner[0].dataValues);
-  });
+//GET new book form
+app.get("/books/new", (req, res) => {
+  res.render("new_book");
+});
+
+//POST book form
+app.post("/books/new", (req, res) => {
+  const bookTitle = req.body.title;
+  const bookAuthor = req.body.author;
+  const bookGenre = req.body.genre;
+  const firstPub = req.body.first_published;
+  Book.create({
+    title: bookTitle,
+    author: bookAuthor,
+    genre: bookGenre,
+    first_published: firstPub,
+    timestamps: false
+  })
+    .then(book => {
+      console.log(book);
+      res.redirect("/all_books");
+    })
+    .catch(err => console.log(err));
 });
 
 // Uploading a value- Book (working)
@@ -132,25 +172,6 @@ app.get("/all_loans", (req, res) => {
 //   .then(jane => {
 //     console.log(jane.toJSON());
 //   });
-
-//Uploading a value- User (working)
-// sequelize
-//   .sync()
-//   .then(() =>
-//     User.create({
-//       username: "harry potter smells"
-//     })
-//   )
-//   .then(jane => {
-//     console.log(jane.toJSON());
-//   });
-
-// Pulling a value- (working)
-// sequelize.sync().then(() =>
-//   Book.findAll().then(user => {
-//     console.log(user);
-//   })
-// );
 
 //////////////////
 //SERVER SETUP////
