@@ -40,4 +40,28 @@ router.get("/checked_loans", (req, res) => {
   });
 });
 
+//GET new loan form
+router.get("/loans/new", (req, res) => {
+  //Must search book, patron, and loan
+  //Get all books and filter out books not returned (ie: exist in loan table but returned= null)
+  Promise.all([
+    Loan.findAll({
+      //Check if 'returned_on' = null
+      where: {
+        returned_on: null
+      }
+    }),
+    Book.findAll(),
+    Patron.findAll()
+  ]).then(response => {
+    // console.log(response[0][0]); //Unreturned loans (first one);
+    // console.log(response[1][0].dataValues); //Books (all)- this lists first one;
+    const listAllBooks = response[1];
+    //
+    console.log(listAllBooks.length);
+    // console.log(response[2][0].dataValues); //Patrons (all)- this lists first one;
+    res.render("new_loan");
+  });
+});
+
 module.exports = router;

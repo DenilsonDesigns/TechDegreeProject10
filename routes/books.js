@@ -41,6 +41,24 @@ router.get("/checked_books", (req, res) => {
   });
 });
 
+//TODO: MUST MAKE PROPER QUERY
+//GET overdue books
+router.get("/overdue_books", (req, res) => {
+  res.render("overdue_books");
+  // sequelize.sync().then(() => {
+  //   Loan.findAll({
+  //     //Check if 'returned_on' = null
+  //     where: {
+  //       returned_on: null
+  //     },
+  //     include: [{ model: Patron }, { model: Book }]
+  //   }).then(checkedBooks => {
+  //     // console.log(checkedBooks[3].dataValues);
+  //     res.render("checked_books", { checkedBooks: checkedBooks });
+  //   });
+  // });
+});
+
 //POST book form
 router.post("/books/new", (req, res) => {
   const bookTitle = req.body.title;

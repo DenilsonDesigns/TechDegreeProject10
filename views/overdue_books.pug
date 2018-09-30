@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title Books
+    title Overdue Books
     link(rel='stylesheet', href='/static/stylesheets/style.css')
   body
     nav
@@ -12,9 +12,9 @@ html
           a(href='all_patrons') Patrons
         li
           a(href='all_loans') Loans
-    h1 Books
+    h1 Overdue Books
     p
-      a.button(href='books/new') Create New Book
+      a.button(href='new_book') Create New Book
     p
       | Filters 
       a(href='all_books') All
@@ -30,10 +30,21 @@ html
           th Genre
           th Year Released
       tbody
-      each book in books
         tr
           td
-            a(href='book_detail.html') #{book.dataValues.title}
-          td #{book.dataValues.author}
-          td #{book.dataValues.genre}
-          td #{book.dataValues.first_published}
+            a(href='book_detail.html') Harry Potter and the Goblet of Fire
+          td J.K. Rowling
+          td Fantasy
+          td 2000
+        tr
+          td
+            a(href='book_detail.html') A Brief History of Time
+          td Stephen Hawking
+          td Non Fiction
+          td 1988
+        tr
+          td
+            a(href='book_detail.html') The Universe in a Nutshell
+          td Stephen Hawking
+          td Non Fiction
+          td 2001
