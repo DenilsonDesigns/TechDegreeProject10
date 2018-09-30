@@ -1,14 +1,35 @@
-'use strict';
-module.exports = (sequelize, DataTypes) => {
-  const Loan = sequelize.define('Loan', {
-    id: DataTypes.INTEGER,
-    book_id: DataTypes.INTEGER,
-    patron_id: DataTypes.INTEGER,
-    loaned_on: DataTypes.DATE,
-    returned_on: DataTypes.DATE
-  }, {});
-  Loan.associate = function(models) {
-    // associations can be defined here
-  };
-  return Loan;
-};
+const Sequelize = require("sequelize");
+const sequelize = require("./index");
+
+const Book = require("./book");
+const Patron = require("./patron");
+
+//Define Loan model
+const Loan = sequelize.define(
+  "loan",
+  {
+    book_id: {
+      type: Sequelize.INTEGER
+    },
+    patron_id: {
+      type: Sequelize.INTEGER
+    },
+    loaned_on: {
+      type: Sequelize.DATE
+    },
+    return_by: {
+      type: Sequelize.DATE
+    },
+    returned_on: {
+      type: Sequelize.DATE
+    }
+  },
+  {
+    timestamps: false
+  }
+);
+
+Loan.belongsTo(Patron, { foreignKey: "patron_id" });
+Loan.belongsTo(Book, { foreignKey: "book_id" });
+
+module.exports = Loan;

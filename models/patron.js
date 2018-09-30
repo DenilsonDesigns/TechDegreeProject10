@@ -1,16 +1,32 @@
-'use strict';
-module.exports = (sequelize, DataTypes) => {
-  const Patron = sequelize.define('Patron', {
-    id: DataTypes.INTEGER,
-    first_name: DataTypes.STRING,
-    last_name: DataTypes.STRING,
-    address: DataTypes.STRING,
-    email: DataTypes.STRING,
-    library_id: DataTypes.STRING,
-    zip_code: DataTypes.INTEGER
-  }, {});
-  Patron.associate = function(models) {
-    // associations can be defined here
-  };
-  return Patron;
-};
+const Sequelize = require("sequelize");
+const sequelize = require("./index");
+
+//Define Patron model
+const Patron = sequelize.define(
+  "patron",
+  {
+    first_name: {
+      type: Sequelize.TEXT
+    },
+    last_name: {
+      type: Sequelize.TEXT
+    },
+    address: {
+      type: Sequelize.TEXT
+    },
+    email: {
+      type: Sequelize.TEXT
+    },
+    library_id: {
+      type: Sequelize.TEXT
+    },
+    zip_code: {
+      type: Sequelize.INTEGER
+    }
+  },
+  {
+    timestamps: false
+  }
+);
+
+module.exports = Patron;

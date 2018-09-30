@@ -1,17 +1,26 @@
-"use strict";
-module.exports = (sequelize, DataTypes) => {
-  const Book = sequelize.define(
-    "Book",
-    {
-      title: DataTypes.STRING,
-      author: DataTypes.STRING,
-      genre: DataTypes.STRING,
-      first_published: DataTypes.INTEGER
+const Sequelize = require("sequelize");
+const sequelize = require("./index");
+
+//Define book model
+const Book = sequelize.define(
+  "book",
+  {
+    title: {
+      type: Sequelize.TEXT
     },
-    {}
-  );
-  Book.associate = function(models) {
-    // associations can be defined here
-  };
-  return Book;
-};
+    author: {
+      type: Sequelize.TEXT
+    },
+    genre: {
+      type: Sequelize.STRING
+    },
+    first_published: {
+      type: Sequelize.INTEGER
+    }
+  },
+  {
+    timestamps: false
+  }
+);
+
+module.exports = Book;
