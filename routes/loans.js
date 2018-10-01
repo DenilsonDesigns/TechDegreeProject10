@@ -49,19 +49,34 @@ router.get("/loans/new", (req, res) => {
       //Check if 'returned_on' = null
       where: {
         returned_on: null
-      }
+      },
+      include: [{ model: Book }]
     }),
     Book.findAll(),
     Patron.findAll()
-  ]).then(response => {
-    // console.log(response[0][0]); //Unreturned loans (first one);
-    // console.log(response[1][0].dataValues); //Books (all)- this lists first one;
-    const listAllBooks = response[1];
-    //
-    console.log(listAllBooks.length);
-    // console.log(response[2][0].dataValues); //Patrons (all)- this lists first one;
-    res.render("new_loan");
-  });
+  ])
+    .then(response => {
+      let listAllBooks = response[1];
+      // // console.log(listAllBooks[0].dataValues.title);
+      // listAllBooks = response[1].map(element => {
+      //   element.dataValues.title;
+      // });
+
+      const loanedOutBookTitles = response[0].map(element => {
+        element.book.dataValues.title;
+      });
+      const availBooks = listAllBooks.filter(element => {
+        return !loanedOutBookTitles.includes(element.dataValues.title);
+      });
+
+      const patrons = response[2];
+      console.log(availBooks);
+      return [patrons, availBooks];
+    })
+    .then(response => {
+      // console.log(response[1]);
+      res.render("new_loan");
+    });
 });
 
 module.exports = router;
