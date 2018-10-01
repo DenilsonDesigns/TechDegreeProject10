@@ -56,26 +56,26 @@ router.get("/loans/new", (req, res) => {
     Patron.findAll()
   ])
     .then(response => {
-      let listAllBooks = response[1];
-      // // console.log(listAllBooks[0].dataValues.title);
-      // listAllBooks = response[1].map(element => {
-      //   element.dataValues.title;
-      // });
-
-      const loanedOutBookTitles = response[0].map(element => {
-        element.book.dataValues.title;
+      //produce array of just all book titles
+      let listAllBooks = response[1].map(element => {
+        return element.dataValues;
       });
+
+      //produce array of only loaned out book titles
+      const loanedOutBookTitles = response[0].map(element => {
+        return element.book.dataValues.title;
+      });
+
+      //array to slice out loaned out books
       const availBooks = listAllBooks.filter(element => {
-        return !loanedOutBookTitles.includes(element.dataValues.title);
+        return loanedOutBookTitles.indexOf(element.title) < 0;
       });
 
       const patrons = response[2];
-      console.log(availBooks);
       return [patrons, availBooks];
     })
     .then(response => {
-      // console.log(response[1]);
-      res.render("new_loan");
+      res.render("new_loan", { patrons: response[0], freeBooks: response[1] });
     });
 });
 
