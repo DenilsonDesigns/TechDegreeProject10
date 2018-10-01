@@ -82,7 +82,8 @@ router.get("/loans/new", (req, res) => {
 //POST loan form
 router.post("/loans/new", (req, res) => {
   //get required form data
-  console.log(req.body);
+  // const loanedOn = req.body.loaned_on.slice(0, 10);
+  // console.log(loanedOn);
   //create loan instance
   Loan.create({
     book_id: req.body.book_id,
@@ -92,7 +93,7 @@ router.post("/loans/new", (req, res) => {
     timestamps: false
   })
     .then(loan => {
-      console.log(loan);
+      // console.log(loan);
       res.redirect("/all_loans");
     })
     .catch(err => console.log(err));
