@@ -79,4 +79,23 @@ router.get("/loans/new", (req, res) => {
     });
 });
 
+//POST loan form
+router.post("/loans/new", (req, res) => {
+  //get required form data
+  console.log(req.body);
+  //create loan instance
+  Loan.create({
+    book_id: req.body.book_id,
+    patron_id: req.body.patron_id,
+    loaned_on: req.body.loaned_on,
+    return_by: req.body.return_by,
+    timestamps: false
+  })
+    .then(loan => {
+      console.log(loan);
+      res.redirect("/all_loans");
+    })
+    .catch(err => console.log(err));
+});
+
 module.exports = router;
