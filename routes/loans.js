@@ -1,10 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const bodyParser = require("body-parser");
-router.use(bodyParser.urlencoded({ extended: true }));
 
 // const Sequelize = require("sequelize");
 const sequelize = require("../models/index");
+
+//Method override
+const methodOverride = require("method-override");
+router.use(methodOverride("_method"));
+
+//Bodyparser middleware
+router.use(bodyParser.urlencoded({ extended: true }));
 
 const Book = require("../models/book");
 const Loan = require("../models/loan");
@@ -94,6 +100,35 @@ router.post("/loans/new", (req, res) => {
       res.redirect("/all_loans");
     })
     .catch(err => console.log(err));
+});
+
+//GET- get return form
+router.get("/loans/:id/return_book", (req, res) => {
+  //GET book details
+  Loan.findById(req.params.id, {
+    include: [{ model: Patron }, { model: Book }]
+  }).then(loan => {
+    // console.log(loan.dataValues);
+    //Render page
+    res.render("return_book", {
+      loan: loan,
+      patron: loan.patron.dataValues,
+      book: loan.book.dataValues
+    });
+  });
+});
+
+//PUT- update loan details (ie, return book)
+router.put("/loans/:id/", (req, res) => {
+  //Find loan
+  Loan.findById(req.params.id)
+    .then(loan => {
+      console.log(loan);
+      loan.update(req.body);
+    })
+    .then(() => {
+      res.redirect("../../all_loans");
+    });
 });
 
 module.exports = router;
