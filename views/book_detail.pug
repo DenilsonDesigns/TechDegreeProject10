@@ -1,0 +1,51 @@
+doctype html
+html
+  head
+    title A Brief History of Time
+    link(rel='stylesheet', href='/static/stylesheets/style.css')
+  body
+    nav
+      ul
+        li
+          a(href='../../all_books') Books
+        li
+          a(href='../../all_patrons') Patrons
+        li
+          a(href='../../all_loans') Loans
+    h1 Book: #{book.dataValues.title}
+    form(action=`/books/${book.dataValues.id}/?_method=PUT` method="POST")
+      p
+        label(for='title') Title
+        input#title(type='text', value=`${book.dataValues.title}` name="book[title]")
+      p
+        label(for='author') Author
+        input#author(type='text', value=`${book.dataValues.author}` name="book[author]")
+      p
+        label(for='genre') Genre
+        input#genre(type='text', value=`${book.dataValues.genre}` name="book[genre]")
+      p
+        label(for='first_published') First Published
+        input#first_published(type='text', value=`${book.dataValues.first_published}` name="book[first_published]")
+      p
+        input(type='submit', value='Update')
+    h2 TODO: Loan History
+    table
+      thead
+        tr
+          th Book
+          th Patron 
+          th Loaned on
+          th Return by 
+          th Returned on
+          th Action
+      tbody
+        tr
+          td
+            a(href='book_detail.html') A Brief History of Time
+          td
+            a(href='patron_detail.html') Andrew Chalkley
+          td 2015-12-12
+          td 2015-12-19
+          td
+          td
+            a.button(href='return_book.html') Return Book

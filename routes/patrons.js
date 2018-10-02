@@ -74,34 +74,4 @@ router.put("/patrons/:id/", (req, res) => {
     });
 });
 
-// Article.findById(req.params.id).then(function(article){
-//   if(article) {
-//     return article.update(req.body);
-//   } else {
-//     res.send(404);
-//   }
-
-// //UPDATE campground route
-// router.put("/:id", middleware.checkCampgroundOwnership, (req, res) => {
-//   //FIND and update the correct campground
-//   Campground.findByIdAndUpdate(
-//     req.params.id,
-//     req.body.campground,
-//     (err, updatedCampground) => {
-//       if (err) {
-//         res.redirect("/campgrounds");
-//       } else {
-//         res.redirect("/campgrounds/" + req.params.id);
-//       }
-//     }
-//   );
-// });
-
-// //EDIT campground route
-// router.get("/:id/edit", middleware.checkCampgroundOwnership, (req, res) => {
-//   Campground.findById(req.params.id, (err, foundCampground) => {
-//     res.render("campgrounds/edit", { campground: foundCampground });
-//   });
-// });
-
 module.exports = router;

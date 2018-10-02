@@ -33,7 +33,7 @@ html
       each book in books
         tr
           td
-            a(href='book_detail.html') #{book.dataValues.title}
+            a(href=`books/${book.dataValues.id}/edit`) #{book.dataValues.title}
           td #{book.dataValues.author}
           td #{book.dataValues.genre}
           td #{book.dataValues.first_published}

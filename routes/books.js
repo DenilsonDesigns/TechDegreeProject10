@@ -6,6 +6,11 @@ router.use(bodyParser.urlencoded({ extended: true }));
 // const Sequelize = require("sequelize");
 const sequelize = require("../models/index");
 
+//Method override
+const methodOverride = require("method-override");
+router.use(methodOverride("_method"));
+
+//MODELS
 const Book = require("../models/book");
 const Loan = require("../models/loan");
 const Patron = require("../models/patron");
@@ -77,6 +82,29 @@ router.post("/books/new", (req, res) => {
       res.redirect("/all_books");
     })
     .catch(err => console.log(err));
+});
+
+//GET- book detail
+router.get("/books/:id/edit", (req, res) => {
+  //Get patron by id- must get loan history
+  Book.findById(req.params.id).then(book => {
+    // console.log(book);
+    res.render("book_detail", { book: book });
+  });
+});
+
+//PUT- Update book details
+router.put("/books/:id/", (req, res) => {
+  //Find and update correct patron
+  // console.log(req.params.id);
+  Book.findById(req.params.id)
+    .then(book => {
+      console.log(book);
+      book.update(req.body.book);
+    })
+    .then(() => {
+      res.redirect("../../all_books");
+    });
 });
 
 module.exports = router;
