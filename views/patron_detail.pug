@@ -1,0 +1,67 @@
+doctype html
+html
+  head
+    title #{patron.dataValues.first_name} #{patron.dataValues.last_name}
+    link(rel='stylesheet', href='/static/stylesheets/style.css')
+  body
+    nav
+      ul
+        li
+          a(href='../../all_books') Books
+        li
+          a(href='../../all_patrons') Patrons
+        li
+          a(href='../../all_loans') Loans
+    h1 Patron: #{patron.dataValues.first_name} #{patron.dataValues.last_name}
+    form(action=`/patrons/${patron.dataValues.id}/?_method=PUT` method="POST")
+      p
+        label(for='first_name') First Name
+        input#first_name(type='text', value=`${patron.dataValues.first_name}` name="patron[first_name]")
+      p
+        label(for='last_name') Last Name
+        input#last_name(type='text', value=`${patron.dataValues.last_name}` name="patron[last_name]")
+      p
+        label(for='address')  Address
+        input#address(type='text', value=`${patron.dataValues.address}` name="patron[address]")
+      p
+        label(for='email') Email
+        input#email(type='text', value=`${patron.dataValues.email}` name="patron[email]")
+      p
+        label(for='library_id') Library ID
+        input#library_id(type='text', value=`${patron.dataValues.library_id}` name="patron[library_id]")
+      p
+        label(for='zip_code') Zip Code
+        input#zip_code(type='text', value=`${patron.dataValues.zip_code}` name="patron[zip_code]")
+      p
+        input(type='submit', value='Update')
+    h2 Loan History
+    table
+      thead
+        tr
+          th Book
+          th Patron 
+          th Loaned on
+          th Return by 
+          th Returned on
+          th Action
+      tbody
+        tr
+          td
+            a(href='book_detail.html') Harry Potter and the Goblet of Fire
+          td
+            a(href='patron_detail.html') Andrew Chalkley
+          td 2015-12-11
+          td 2015-12-18
+          td
+          td
+            a.button(href='return_book.html') Return Book
+        tr
+          td
+            a(href='book_detail.html') A Brief History of Time
+          td
+            a(href='patron_detail.html') Andrew Chalkley
+          td 2015-12-12
+          td 2015-12-19
+          td
+          td
+            a.button(href='return_book.html') Return Book

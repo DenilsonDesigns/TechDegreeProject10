@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const sequelize = require("./models/index");
 const bodyParser = require("body-parser");
+const methodOverride = require("method-override");
 
 //ROUTER
 const bookRoutes = require("./routes/books");
@@ -13,6 +14,7 @@ app.use("/", bookRoutes, patronRoutes, loanRoutes);
 app.set("view engine", "pug");
 app.use("/static", express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
 
 //GET INDEX
 app.get("/", (req, res) => {

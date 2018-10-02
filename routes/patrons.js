@@ -3,6 +3,10 @@ const router = express.Router();
 const bodyParser = require("body-parser");
 router.use(bodyParser.urlencoded({ extended: true }));
 
+//Method override
+const methodOverride = require("method-override");
+router.use(methodOverride("_method"));
+
 // const Sequelize = require("sequelize");
 const sequelize = require("../models/index");
 
@@ -48,5 +52,56 @@ router.post("/patrons/new", (req, res) => {
     })
     .catch(err => console.log(err));
 });
+
+//GET- patron detail
+router.get("/patrons/:id/edit", (req, res) => {
+  //Get patron by id- must get loan history
+  Patron.findById(req.params.id).then(patron => {
+    // console.log(patron);
+    res.render("patron_detail", { patron: patron });
+  });
+});
+
+//PUT- Update patron details
+router.put("/patrons/:id/", (req, res) => {
+  //Find and update correct patron
+  Patron.findById(req.params.id)
+    .then(patron => {
+      patron.update(req.body.patron);
+    })
+    .then(() => {
+      res.redirect("../../all_patrons");
+    });
+});
+
+// Article.findById(req.params.id).then(function(article){
+//   if(article) {
+//     return article.update(req.body);
+//   } else {
+//     res.send(404);
+//   }
+
+// //UPDATE campground route
+// router.put("/:id", middleware.checkCampgroundOwnership, (req, res) => {
+//   //FIND and update the correct campground
+//   Campground.findByIdAndUpdate(
+//     req.params.id,
+//     req.body.campground,
+//     (err, updatedCampground) => {
+//       if (err) {
+//         res.redirect("/campgrounds");
+//       } else {
+//         res.redirect("/campgrounds/" + req.params.id);
+//       }
+//     }
+//   );
+// });
+
+// //EDIT campground route
+// router.get("/:id/edit", middleware.checkCampgroundOwnership, (req, res) => {
+//   Campground.findById(req.params.id, (err, foundCampground) => {
+//     res.render("campgrounds/edit", { campground: foundCampground });
+//   });
+// });
 
 module.exports = router;

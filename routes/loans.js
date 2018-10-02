@@ -81,9 +81,6 @@ router.get("/loans/new", (req, res) => {
 
 //POST loan form
 router.post("/loans/new", (req, res) => {
-  //get required form data
-  // const loanedOn = req.body.loaned_on.slice(0, 10);
-  // console.log(loanedOn);
   //create loan instance
   Loan.create({
     book_id: req.body.book_id,
