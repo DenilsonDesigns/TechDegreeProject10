@@ -19,7 +19,7 @@ html
       | Filters 
       a(href='all_loans') All
       |  
-      a(href='overdue_loans.html') Overdue
+      a(href='overdue_loans') Overdue
       |  
       a(href='checked_loans') Checked Out
     table
@@ -35,9 +35,9 @@ html
       each loan in loans
         tr
           td
-            a(href='book_detail.html') #{loan.dataValues.book.dataValues.title}
+            a(href=`books/${loan.dataValues.book.dataValues.id}/edit`) #{loan.dataValues.book.dataValues.title}
           td
-            a(href='patron_detail.html') #{loan.dataValues.patron.dataValues.first_name} #{loan.dataValues.patron.dataValues.last_name}
+            a(href=`patrons/${loan.dataValues.patron_id}/edit`) #{loan.dataValues.patron.dataValues.first_name} #{loan.dataValues.patron.dataValues.last_name}
           td #{loan.dataValues.loaned_on}
           td #{loan.dataValues.return_by}
           -if(loan.dataValues.returned_on){

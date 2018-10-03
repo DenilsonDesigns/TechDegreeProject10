@@ -33,7 +33,7 @@ html
       each checkedBook in checkedBooks 
         tr
           td
-            a(href='book_detail.html') #{checkedBook.dataValues.book.dataValues.title}
+            a(href=`books/${checkedBook.dataValues.book.dataValues.id}/edit`) #{checkedBook.dataValues.book.dataValues.title}
           td #{checkedBook.dataValues.book.dataValues.author}
           td #{checkedBook.dataValues.book.dataValues.genre}
           td #{checkedBook.dataValues.book.dataValues.first_published}

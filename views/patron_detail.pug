@@ -34,7 +34,8 @@ html
         input#zip_code(type='text', value=`${patron.dataValues.zip_code}` name="patron[zip_code]")
       p
         input(type='submit', value='Update')
-    h2 TODO: Loan History
+    -if(loans[0]!== undefined){
+    h2 Loan History
     table
       thead
         tr
@@ -45,23 +46,20 @@ html
           th Returned on
           th Action
       tbody
+      each loan in loans
         tr
           td
-            a(href='book_detail.html') Harry Potter and the Goblet of Fire
+            a(href=`/books/${loan.dataValues.book_id}/edit`) #{loan.dataValues.book.title}
           td
-            a(href='patron_detail.html') Andrew Chalkley
-          td 2015-12-11
-          td 2015-12-18
+            a(href='#') #{patron.dataValues.first_name} #{patron.dataValues.last_name}
+          td #{loan.dataValues.loaned_on}
+          td #{loan.dataValues.return_by}
+          -if(loan.dataValues.returned_on){
+          td #{loan.dataValues.returned_on}
           td
-          td
-            a.button(href='return_book.html') Return Book
-        tr
-          td
-            a(href='book_detail.html') A Brief History of Time
-          td
-            a(href='patron_detail.html') Andrew Chalkley
-          td 2015-12-12
-          td 2015-12-19
+          -}else{
           td
           td
-            a.button(href='return_book.html') Return Book
+            a.button(href=`../../loans/${loan.dataValues.id}/return_book`) Return Book
+          -}
+    -}

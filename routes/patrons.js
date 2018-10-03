@@ -56,11 +56,36 @@ router.post("/patrons/new", (req, res) => {
 //GET- patron detail
 router.get("/patrons/:id/edit", (req, res) => {
   //Get patron by id- must get loan history
-  Patron.findById(req.params.id).then(patron => {
-    // console.log(patron);
-    res.render("patron_detail", { patron: patron });
+  Promise.all([
+    Patron.findById(req.params.id),
+    Loan.findAll({
+      where: { patron_id: req.params.id },
+      include: { model: Book }
+    })
+  ]).then(response => {
+    // console.log(response[1]);
+    res.render("patron_detail", {
+      patron: response[0],
+      loans: response[1]
+    });
   });
 });
+
+//GET- book detail
+// router.get("/books/:id/edit", (req, res) => {
+//   //Get patron by id- must get loan history
+//   Promise.all([
+//     Book.findById(req.params.id),
+//     Loan.findAll({
+//       where: { book_id: req.params.id },
+//       include: { model: Patron }
+//     })
+//   ]).then(response => {
+//     //chain a query here to loan table to get loan history by book id.
+//     console.log(response[1]);
+//     res.render("book_detail", { book: response[0], loans: response[1] });
+//   });
+// });
 
 //PUT- Update patron details
 router.put("/patrons/:id/", (req, res) => {

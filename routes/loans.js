@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const bodyParser = require("body-parser");
 
-// const Sequelize = require("sequelize");
+const Sequelize = require("sequelize");
 const sequelize = require("../models/index");
+const Op = Sequelize.Op;
 
 //Method override
 const methodOverride = require("method-override");
@@ -23,6 +24,7 @@ router.get("/all_loans", (req, res) => {
       include: [{ model: Patron }, { model: Book }],
       order: [["id", "ASC"]]
     }).then(loaner => {
+      // console.log(loaner);
       res.render("all_loans", { loans: loaner });
       // console.log(loaner[1].dataValues);
       // console.log(loaner[1].dataValues.book.dataValues.title);
@@ -43,6 +45,24 @@ router.get("/checked_loans", (req, res) => {
       // console.log(loaner[3].dataValues);
       res.render("checked_loans", { loans: loaner });
     });
+  });
+});
+
+//GET- overdue loans
+router.get("/overdue_loans", (req, res) => {
+  let todaysDate = new Date().toISOString().slice(0, 10);
+  Loan.findAll({
+    where: {
+      returned_on: null,
+      return_by: {
+        //HOW?
+        [Op.lt]: todaysDate
+      }
+    },
+    include: [{ model: Patron }, { model: Book }]
+  }).then(overdueLoans => {
+    // console.log(overdueLoans);
+    res.render("overdue_loans", { loans: overdueLoans });
   });
 });
 

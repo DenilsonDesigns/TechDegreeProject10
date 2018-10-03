@@ -28,7 +28,8 @@ html
         input#first_published(type='text', value=`${book.dataValues.first_published}` name="book[first_published]")
       p
         input(type='submit', value='Update')
-    h2 TODO: Loan History
+    -if(loans[0]!== undefined){
+    h2 Loan History
     table
       thead
         tr
@@ -39,13 +40,20 @@ html
           th Returned on
           th Action
       tbody
+      each loan in loans
         tr
           td
-            a(href='book_detail.html') A Brief History of Time
+            a(href=`/books/${book.dataValues.id}/edit`) #{book.dataValues.title}
           td
-            a(href='patron_detail.html') Andrew Chalkley
-          td 2015-12-12
-          td 2015-12-19
+            a(href=`/../patrons/${loan.dataValues.patron.dataValues.id}/edit`) #{loan.dataValues.patron.dataValues.first_name} #{loan.dataValues.patron.dataValues.last_name}
+          td #{loan.dataValues.loaned_on}
+          td #{loan.dataValues.return_by}
+          -if(loan.dataValues.returned_on){
+          td #{loan.dataValues.returned_on}
+          td
+          -}else{
           td
           td
-            a.button(href='return_book.html') Return Book
+            a.button(href=`../../loans/${loan.dataValues.id}/return_book`) Return Book
+          -}
+    -}
