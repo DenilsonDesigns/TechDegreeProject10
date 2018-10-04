@@ -16,12 +16,17 @@ const Patron = require("../models/patron");
 
 //GET ALL PATRONS
 router.get("/all_patrons", (req, res) => {
-  sequelize.sync().then(() => {
-    Patron.findAll().then(patronage => {
-      res.render("all_patrons", { patrons: patronage });
-      // console.log(patronage[0].dataValues);
+  sequelize
+    .sync()
+    .then(() => {
+      Patron.findAll().then(patronage => {
+        res.render("all_patrons", { patrons: patronage });
+        // console.log(patronage[0].dataValues);
+      });
+    })
+    .catch(err => {
+      res.send(500, err);
     });
-  });
 });
 // Patron.hasOne(Loan, { foreignKey: "patron_id" });
 
@@ -50,7 +55,16 @@ router.post("/patrons/new", (req, res) => {
       console.log(patron);
       res.redirect("/all_patrons");
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      if (err.name === "SequelizeValidationError") {
+        res.render("new_patron", { errors: err.errors });
+      } else {
+        throw error;
+      }
+    })
+    .catch(err => {
+      res.send(500, err);
+    });
 });
 
 //GET- patron detail
@@ -62,30 +76,18 @@ router.get("/patrons/:id/edit", (req, res) => {
       where: { patron_id: req.params.id },
       include: { model: Book }
     })
-  ]).then(response => {
-    // console.log(response[1]);
-    res.render("patron_detail", {
-      patron: response[0],
-      loans: response[1]
+  ])
+    .then(response => {
+      // console.log(response[1]);
+      res.render("patron_detail", {
+        patron: response[0],
+        loans: response[1]
+      });
+    })
+    .catch(err => {
+      res.send(500, err);
     });
-  });
 });
-
-//GET- book detail
-// router.get("/books/:id/edit", (req, res) => {
-//   //Get patron by id- must get loan history
-//   Promise.all([
-//     Book.findById(req.params.id),
-//     Loan.findAll({
-//       where: { book_id: req.params.id },
-//       include: { model: Patron }
-//     })
-//   ]).then(response => {
-//     //chain a query here to loan table to get loan history by book id.
-//     console.log(response[1]);
-//     res.render("book_detail", { book: response[0], loans: response[1] });
-//   });
-// });
 
 //PUT- Update patron details
 router.put("/patrons/:id/", (req, res) => {
@@ -96,6 +98,21 @@ router.put("/patrons/:id/", (req, res) => {
     })
     .then(() => {
       res.redirect("../../all_patrons");
+    })
+    .catch(err => {
+      if (err.name === "SequelizeValidationError") {
+        console.log(req.body);
+        res.render("patron_detail", {
+          patron,
+          loans: req.body,
+          errors: err.errors
+        });
+      } else {
+        throw error;
+      }
+    })
+    .catch(err => {
+      res.send(500, err);
     });
 });
 

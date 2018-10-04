@@ -13,6 +13,12 @@ html
         li
           a(href='../all_loans') Loans
     h1 New Patron
+    if(errors)
+      h2.errors Ooops an error occured!
+      ul.errors
+      each error in errors
+        li
+          =error.message
     form(action="/patrons/new" method="POST")
       p
         label(for='first_name') First Name

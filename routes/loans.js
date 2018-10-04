@@ -19,33 +19,40 @@ const Patron = require("../models/patron");
 
 //GET ALL LOANS
 router.get("/all_loans", (req, res) => {
-  sequelize.sync().then(() => {
-    Loan.findAll({
-      include: [{ model: Patron }, { model: Book }],
-      order: [["id", "ASC"]]
-    }).then(loaner => {
-      // console.log(loaner);
-      res.render("all_loans", { loans: loaner });
-      // console.log(loaner[1].dataValues);
-      // console.log(loaner[1].dataValues.book.dataValues.title);
+  sequelize
+    .sync()
+    .then(() => {
+      Loan.findAll({
+        include: [{ model: Patron }, { model: Book }],
+        order: [["id", "ASC"]]
+      }).then(loaner => {
+        res.render("all_loans", { loans: loaner });
+      });
+    })
+    .catch(err => {
+      res.send(500, err);
     });
-  });
 });
 
 //GET checked_loans
 router.get("/checked_loans", (req, res) => {
-  sequelize.sync().then(() => {
-    Loan.findAll({
-      //Check if 'returned_on' = null
-      where: {
-        returned_on: null
-      },
-      include: [{ model: Patron }, { model: Book }]
-    }).then(loaner => {
-      // console.log(loaner[3].dataValues);
-      res.render("checked_loans", { loans: loaner });
+  sequelize
+    .sync()
+    .then(() => {
+      Loan.findAll({
+        //Check if 'returned_on' = null
+        where: {
+          returned_on: null
+        },
+        include: [{ model: Patron }, { model: Book }]
+      }).then(loaner => {
+        // console.log(loaner[3].dataValues);
+        res.render("checked_loans", { loans: loaner });
+      });
+    })
+    .catch(err => {
+      res.send(500, err);
     });
-  });
 });
 
 //GET- overdue loans
@@ -60,10 +67,14 @@ router.get("/overdue_loans", (req, res) => {
       }
     },
     include: [{ model: Patron }, { model: Book }]
-  }).then(overdueLoans => {
-    // console.log(overdueLoans);
-    res.render("overdue_loans", { loans: overdueLoans });
-  });
+  })
+    .then(overdueLoans => {
+      // console.log(overdueLoans);
+      res.render("overdue_loans", { loans: overdueLoans });
+    })
+    .catch(err => {
+      res.send(500, err);
+    });
 });
 
 //GET new loan form
@@ -102,6 +113,10 @@ router.get("/loans/new", (req, res) => {
     })
     .then(response => {
       res.render("new_loan", { patrons: response[0], freeBooks: response[1] });
+    })
+    .catch(err => {
+      console.log(err);
+      res.send(500, err);
     });
 });
 
@@ -119,7 +134,9 @@ router.post("/loans/new", (req, res) => {
       // console.log(loan);
       res.redirect("/all_loans");
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      res.send(500, err);
+    });
 });
 
 //GET- get return form
@@ -127,15 +144,19 @@ router.get("/loans/:id/return_book", (req, res) => {
   //GET book details
   Loan.findById(req.params.id, {
     include: [{ model: Patron }, { model: Book }]
-  }).then(loan => {
-    // console.log(loan.dataValues);
-    //Render page
-    res.render("return_book", {
-      loan: loan,
-      patron: loan.patron.dataValues,
-      book: loan.book.dataValues
+  })
+    .then(loan => {
+      // console.log(loan.dataValues);
+      //Render page
+      res.render("return_book", {
+        loan: loan,
+        patron: loan.patron.dataValues,
+        book: loan.book.dataValues
+      });
+    })
+    .catch(err => {
+      res.send(500, err);
     });
-  });
 });
 
 //PUT- update loan details (ie, return book)
@@ -150,5 +171,16 @@ router.put("/loans/:id/", (req, res) => {
       res.redirect("../../all_loans");
     });
 });
+
+// .catch(err => {
+//   if (err.name === "SequelizeValidationError") {
+//     res.render("new_patron", { errors: err.errors });
+//   } else {
+//     throw error;
+//   }
+// })
+// .catch(err => {
+//   res.send(500, err);
+// });
 
 module.exports = router;

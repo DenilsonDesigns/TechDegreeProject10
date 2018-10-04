@@ -6,16 +6,39 @@ const Book = sequelize.define(
   "book",
   {
     title: {
-      type: Sequelize.TEXT
+      type: Sequelize.TEXT,
+      validate: {
+        notEmpty: {
+          msg: "Title is required"
+        }
+      }
     },
     author: {
-      type: Sequelize.TEXT
+      type: Sequelize.TEXT,
+      validate: {
+        notEmpty: {
+          msg: "Author is required"
+        }
+      }
     },
     genre: {
-      type: Sequelize.STRING
+      type: Sequelize.STRING,
+      validate: {
+        notEmpty: {
+          msg: "Genre is required"
+        }
+      }
     },
     first_published: {
-      type: Sequelize.INTEGER
+      type: Sequelize.INTEGER,
+      validate: {
+        notEmpty: {
+          msg: "Published year is required"
+        },
+        isInt: {
+          msg: "Please enter a year 'YYYY'"
+        }
+      }
     }
   },
   {

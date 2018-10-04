@@ -13,6 +13,12 @@ html
         li
           a(href='../all_loans') Loans
     h1 New Loan
+    if(errors)
+      h2.errors Ooops an error occured!
+      ul.errors
+      each error in errors
+        li
+          =error.message
     form(action="/loans/new" method="POST")
       p
         label(for='book_id') Book

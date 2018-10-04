@@ -13,6 +13,12 @@ html
         li
           a(href='../../all_loans') Loans
     h1 Patron: #{patron.dataValues.first_name} #{patron.dataValues.last_name}
+    if(errors)
+      h2.errors Ooops an error occured!
+      ul.errors
+      each error in errors
+        li
+          =error.message
     form(action=`/patrons/${patron.dataValues.id}/?_method=PUT` method="POST")
       p
         label(for='first_name') First Name

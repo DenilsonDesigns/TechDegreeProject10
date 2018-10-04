@@ -15,10 +15,20 @@ const Loan = sequelize.define(
       type: Sequelize.INTEGER
     },
     loaned_on: {
-      type: Sequelize.DATEONLY
+      type: Sequelize.DATEONLY,
+      validate: {
+        notEmpty: {
+          msg: "Loaned on date is required"
+        }
+      }
     },
     return_by: {
-      type: Sequelize.DATEONLY
+      type: Sequelize.DATEONLY,
+      validate: {
+        notEmpty: {
+          msg: "Return by date required"
+        }
+      }
     },
     returned_on: {
       type: Sequelize.DATEONLY
@@ -28,6 +38,15 @@ const Loan = sequelize.define(
     timestamps: false
   }
 );
+
+// zip_code: {
+//   type: Sequelize.INTEGER,
+//   validate: {
+//     notEmpty: {
+//       msg: "Zip code is required"
+//     }
+//   }
+// }
 
 Loan.belongsTo(Patron, { foreignKey: "patron_id" });
 Loan.belongsTo(Book, { foreignKey: "book_id" });
