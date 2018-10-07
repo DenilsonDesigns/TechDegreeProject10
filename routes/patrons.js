@@ -93,12 +93,8 @@ router.get("/patrons/:id/edit", (req, res) => {
 router.put("/patrons/:id/", (req, res) => {
   //Find and update correct patron
   Patron.findById(req.params.id)
-    .then(patron => {
-      patron.update(req.body.patron);
-    })
-    .then(() => {
-      res.redirect("../../all_patrons");
-    })
+    .then(patron => patron.update(req.body.patron))
+    .then(() => res.redirect("../../all_patrons"))
     .catch(err => {
       if (err.name === "SequelizeValidationError") {
         console.log(req.body);

@@ -104,35 +104,43 @@ router.get("/books/:id/edit", (req, res) => {
       where: { book_id: req.params.id },
       include: { model: Patron }
     })
-  ]).then(response => {
-    //chain a query here to loan table to get loan history by book id.
-    // console.log(response[1]);
-    res.render("book_detail", { book: response[0], loans: response[1] });
-  });
+  ])
+    .then(response => {
+      //chain a query here to loan table to get loan history by book id.
+      // console.log(response[1]);
+      res.render("book_detail", { book: response[0], loans: response[1] });
+    })
+    .catch(err => {
+      res.send(500, err);
+    });
 });
 
 //PUT- Update book details
 router.put("/books/:id/", (req, res) => {
   //Find and update correct patron
   Book.findById(req.params.id)
-    .then(book => {
-      console.log(book);
-      book.update(req.body.book);
-    })
-    .then(book => {
-      console.log(book);
+    .then(book =>
+      // console.log(book);
+      book.update(req.body.book)
+    )
+    .then(() => {
       res.redirect("../../all_books");
     })
 
-    //THIS WILL NOT CATCH THE ERROR
-    .catch(err => {
+    //TODO
+    .catch(error => {
       let book = Book.build(req.body);
-      if (err.name === "SequelizeValidationError") {
-        res.render("book_detail", { book: book, errors: err.errors });
+      if (error.name === "SequelizeValidationError") {
+        res.redirect("/books/:id/edit", {
+          book: req.body,
+          loans: req.body,
+          errors: error
+        });
       } else {
         throw error;
       }
     })
+
     .catch(err => {
       res.send(500, err);
     });

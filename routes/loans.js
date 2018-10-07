@@ -130,10 +130,18 @@ router.post("/loans/new", (req, res) => {
     return_by: req.body.return_by,
     timestamps: false
   })
-    .then(loan => {
+    ////////////////////////////////////////////
+    //This doesnt work
+    .catch(err => {
+      if (err.name === "SequelizeValidationError") {
+        res.redirect("/loans/new", { errors: err.errors });
+      } else {
+        throw error;
+      }
       // console.log(loan);
       res.redirect("/all_loans");
     })
+    //catch validation errors
     .catch(err => {
       res.send(500, err);
     });
