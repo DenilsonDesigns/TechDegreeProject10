@@ -139,8 +139,7 @@ router.post("/loans/new", (req, res) => {
         res.redirect("/all_loans");
       });
     })
-    ////////////////////////////////////////////
-    //This doesnt work
+    //catch validation errors
     .catch(err => {
       console.log(err);
       if (err.name === "SequelizeValidationError") {
@@ -155,7 +154,6 @@ router.post("/loans/new", (req, res) => {
         throw error;
       }
     })
-    //catch validation errors
     .catch(err => {
       res.status(500).send(err);
     });
@@ -186,23 +184,34 @@ router.put("/loans/:id/", (req, res) => {
   //Find loan
   Loan.findById(req.params.id)
     .then(loan => {
-      console.log(loan);
-      loan.update(req.body);
+      loan
+        .update(req.body)
+        .then(() => {
+          res.redirect("/all_loans");
+        })
+        .catch(async err => {
+          console.log(err);
+          if (err.name === "SequelizeValidationError") {
+            const loan = await Loan.findById(req.params.id, {
+              include: [{ model: Patron }, { model: Book }]
+            });
+            // console.log(loan.dataValues);
+            //Render page
+            res.render("return_book", {
+              loan: loan,
+              patron: loan.patron.dataValues,
+              book: loan.book.dataValues,
+              errors: err.errors
+            });
+          } else {
+            throw error;
+          }
+        });
     })
-    .then(() => {
-      res.redirect("../../all_loans");
+
+    .catch(err => {
+      res.status(500).send(err);
     });
 });
-
-// .catch(err => {
-//   if (err.name === "SequelizeValidationError") {
-//     res.render("new_patron", { errors: err.errors });
-//   } else {
-//     throw error;
-//   }
-// })
-// .catch(err => {
-//   res.send(500, err);
-// });
 
 module.exports = router;

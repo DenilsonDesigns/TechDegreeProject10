@@ -30,15 +30,7 @@ const Book = sequelize.define(
       }
     },
     first_published: {
-      type: Sequelize.INTEGER,
-      validate: {
-        notEmpty: {
-          msg: "Published year is required"
-        },
-        isInt: {
-          msg: "Please enter a year 'YYYY'"
-        }
-      }
+      type: Sequelize.INTEGER
     }
   },
   {

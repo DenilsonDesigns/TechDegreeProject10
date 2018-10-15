@@ -14,6 +14,12 @@ html
         li
           a(href='../../all_loans') Loans
     h1 Patron: Return Book
+    if(errors)
+      h2.errors Ooops an error occured!
+      ul.errors
+      each error in errors
+        li
+          =error.message
     p
       strong Book Title: 
       | #{book.title}

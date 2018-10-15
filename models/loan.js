@@ -33,7 +33,12 @@ const Loan = sequelize.define(
       }
     },
     returned_on: {
-      type: Sequelize.DATEONLY
+      type: Sequelize.DATEONLY,
+      validate: {
+        notEmpty: {
+          msg: "Return date is required"
+        }
+      }
     }
   },
   {
