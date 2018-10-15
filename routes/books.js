@@ -121,28 +121,30 @@ router.put("/books/:id/", (req, res) => {
   Book.findById(req.params.id)
     .then(book =>
       // console.log(book);
-      book.update(req.body.book)
+      book.update(req.body.book).catch(async error => {
+        let book = Book.build(req.body);
+        if (error.name === "SequelizeValidationError") {
+          const book = await Book.findById(req.params.id);
+          const loans = await Loan.findAll({
+            where: { book_id: req.params.id },
+            include: { model: Patron }
+          });
+
+          res.render("book_detail", {
+            book: book,
+            loans: loans,
+            errors: error.errors
+          });
+        } else {
+          throw error;
+        }
+      })
     )
     .then(() => {
       res.redirect("../../all_books");
     })
-
-    //TODO
-    .catch(error => {
-      let book = Book.build(req.body);
-      if (error.name === "SequelizeValidationError") {
-        res.redirect("/books/:id/edit", {
-          book: req.body,
-          loans: req.body,
-          errors: error
-        });
-      } else {
-        throw error;
-      }
-    })
-
     .catch(err => {
-      res.send(500, err);
+      res.status(500).send(err);
     });
 });
 

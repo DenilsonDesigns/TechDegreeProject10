@@ -93,20 +93,21 @@ router.get("/patrons/:id/edit", (req, res) => {
 router.put("/patrons/:id/", (req, res) => {
   //Find and update correct patron
   Patron.findById(req.params.id)
-    .then(patron => patron.update(req.body.patron))
+    .then(patron =>
+      patron.update(req.body.patron).catch(err => {
+        if (err.name === "SequelizeValidationError") {
+          res.render("patron_detail", {
+            patron,
+            loans: req.body,
+            errors: err.errors
+          });
+        } else {
+          throw error;
+        }
+      })
+    )
     .then(() => res.redirect("../../all_patrons"))
-    .catch(err => {
-      if (err.name === "SequelizeValidationError") {
-        console.log(req.body);
-        res.render("patron_detail", {
-          patron,
-          loans: req.body,
-          errors: err.errors
-        });
-      } else {
-        throw error;
-      }
-    })
+
     .catch(err => {
       res.send(500, err);
     });

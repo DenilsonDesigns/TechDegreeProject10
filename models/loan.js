@@ -16,8 +16,10 @@ const Loan = sequelize.define(
     },
     loaned_on: {
       type: Sequelize.DATEONLY,
+      allowNull: false,
       validate: {
         notEmpty: {
+          isDate: true,
           msg: "Loaned on date is required"
         }
       }

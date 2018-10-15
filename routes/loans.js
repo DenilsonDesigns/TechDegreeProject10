@@ -92,27 +92,28 @@ router.get("/loans/new", (req, res) => {
     Book.findAll(),
     Patron.findAll()
   ])
+    //I PUT IN THIS CODE TO FILTER OUT BOOKS ALREADY LOANED OUT BUT THIS IN UNNECCSSARY
+    // .then(response => {
+    //   //produce array of just all book titles
+    //   let listAllBooks = response[1].map(element => {
+    //     return element.dataValues;
+    //   });
+
+    //   //produce array of only loaned out book titles
+    //   const loanedOutBookTitles = response[0].map(element => {
+    //     return element.book.dataValues.title;
+    //   });
+
+    //   //array to slice out loaned out books
+    //   const availBooks = listAllBooks.filter(element => {
+    //     return loanedOutBookTitles.indexOf(element.title) < 0;
+    //   });
+
+    //   const patrons = response[2];
+    //   return [patrons, availBooks];
+    // })
     .then(response => {
-      //produce array of just all book titles
-      let listAllBooks = response[1].map(element => {
-        return element.dataValues;
-      });
-
-      //produce array of only loaned out book titles
-      const loanedOutBookTitles = response[0].map(element => {
-        return element.book.dataValues.title;
-      });
-
-      //array to slice out loaned out books
-      const availBooks = listAllBooks.filter(element => {
-        return loanedOutBookTitles.indexOf(element.title) < 0;
-      });
-
-      const patrons = response[2];
-      return [patrons, availBooks];
-    })
-    .then(response => {
-      res.render("new_loan", { patrons: response[0], freeBooks: response[1] });
+      res.render("new_loan", { patrons: response[2], freeBooks: response[1] });
     })
     .catch(err => {
       console.log(err);
@@ -130,20 +131,33 @@ router.post("/loans/new", (req, res) => {
     return_by: req.body.return_by,
     timestamps: false
   })
+    .then(() => {
+      Loan.findAll({
+        include: [{ model: Patron }, { model: Book }],
+        order: [["id", "ASC"]]
+      }).then(loaner => {
+        res.redirect("/all_loans");
+      });
+    })
     ////////////////////////////////////////////
     //This doesnt work
     .catch(err => {
+      console.log(err);
       if (err.name === "SequelizeValidationError") {
-        res.redirect("/loans/new", { errors: err.errors });
+        Promise.all([Book.findAll(), Patron.findAll()]).then(response => {
+          res.render("new_loan", {
+            patrons: response[1],
+            freeBooks: response[0],
+            errors: err.errors
+          });
+        });
       } else {
         throw error;
       }
-      // console.log(loan);
-      res.redirect("/all_loans");
     })
     //catch validation errors
     .catch(err => {
-      res.send(500, err);
+      res.status(500).send(err);
     });
 });
 
